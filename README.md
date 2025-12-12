@@ -1,6 +1,6 @@
 # Blackwolf - Website Institucional
 
-Modern single-page website for Blackwolf - a business platform connecting innovative projects to strategic investors. Built with Next.js 16, React 19, TypeScript, and Tailwind CSS 4.
+Site institucional moderno de página única para a **Blackwolf**, uma plataforma de negócios que conecta projetos inovadores a investidores estratégicos. Desenvolvido com Next.js 16, React 19, TypeScript e Tailwind CSS 4.
 
 ## 🚀 Sobre o Projeto
 
@@ -74,12 +74,6 @@ npm run dev
 
 4. Abra [http://localhost:3000](http://localhost:3000) no navegador
 
-### Scripts Disponíveis
-
-- `npm run dev` - Inicia o servidor de desenvolvimento
-- `npm run build` - Cria build de produção
-- `npm run start` - Inicia servidor de produção
-- `npm run lint` - Executa o linter
 
 ## 📝 Seções do Site
 
@@ -95,9 +89,6 @@ npm run dev
 - Empresas em Expansão que precisam de parceiros
 - Projetos Internacionais com interesse na América Latina
 
-## 📄 Licença
-
-Este projeto é privado e pertence à Blackwolf.
 
 ## 👨‍💻 Desenvolvido com
 
