@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Blackwolf - Website Institucional
 
-## Getting Started
+Modern single-page website for Blackwolf - a business platform connecting innovative projects to strategic investors. Built with Next.js 16, React 19, TypeScript, and Tailwind CSS 4.
 
-First, run the development server:
+## 🚀 Sobre o Projeto
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Site institucional de página única para a **Blackwolf**, uma empresa de negócios e relacionamentos dedicada a conectar projetos inovadores a investidores estratégicos, impulsionando crescimento, rentabilidade e expansão global.
+
+**Slogan**: Negócios, Inovação, Confiança
+
+## 🛠️ Tecnologias
+
+- **Next.js 16.0.10** - Framework React
+- **React 19.2.1** - Biblioteca JavaScript
+- **TypeScript 5** - Tipagem estática
+- **Tailwind CSS 4** - Framework CSS utility-first
+- **Lucide React** - Biblioteca de ícones
+- **Inter** - Fonte Google Fonts
+
+## 📁 Estrutura do Projeto
+
+```
+blackwolf-site/
+├── app/
+│   ├── layout.tsx      # Layout principal com fontes
+│   ├── page.tsx        # Página principal
+│   └── globals.css     # Estilos globais
+├── components/
+│   ├── Header.tsx      # Cabeçalho com navegação
+│   ├── Hero.tsx        # Seção hero com slider
+│   ├── Sobre.tsx       # Seção sobre (Missão, Visão, Valores)
+│   ├── Solucoes.tsx    # Seção de soluções
+│   ├── Contato.tsx     # Formulário de contato
+│   └── Footer.tsx      # Rodapé
+└── public/
+    └── images/
+        └── logo-blackwolf.png  # Logo da empresa
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎨 Características
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- ✅ Design responsivo (mobile, tablet, desktop)
+- ✅ Tema escuro minimalista (tons de cinza/grafite)
+- ✅ Slider automático na seção hero
+- ✅ Navegação suave entre seções (scroll âncora)
+- ✅ Menu mobile funcional
+- ✅ Animações e transições suaves
+- ✅ Paleta de cores: Preto (#000), Cinza Grafite (#1A1A1A), Azul (#1179a6)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Como Executar
 
-## Learn More
+### Pré-requisitos
 
-To learn more about Next.js, take a look at the following resources:
+- Node.js 18+ instalado
+- npm ou yarn
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Instalação
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Clone o repositório:
+```bash
+git clone <url-do-repositorio>
+cd blackwolf-site
+```
 
-## Deploy on Vercel
+2. Instale as dependências:
+```bash
+npm install
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Execute o servidor de desenvolvimento:
+```bash
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Abra [http://localhost:3000](http://localhost:3000) no navegador
+
+### Scripts Disponíveis
+
+- `npm run dev` - Inicia o servidor de desenvolvimento
+- `npm run build` - Cria build de produção
+- `npm run start` - Inicia servidor de produção
+- `npm run lint` - Executa o linter
+
+## 📝 Seções do Site
+
+1. **Home/Hero** - Slider com mensagens principais
+2. **Sobre** - Missão, Visão e Valores da empresa
+3. **Soluções** - Serviços oferecidos e público-alvo
+4. **Contato** - Formulário de contato
+
+## 🎯 Público-Alvo
+
+- Startups que querem escalar rápido
+- Investidores buscando rentabilidade e inovação
+- Empresas em Expansão que precisam de parceiros
+- Projetos Internacionais com interesse na América Latina
+
+## 📄 Licença
+
+Este projeto é privado e pertence à Blackwolf.
+
+## 👨‍💻 Desenvolvido com
+
+Next.js, React, TypeScript e Tailwind CSS
