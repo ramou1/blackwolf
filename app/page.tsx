@@ -2,6 +2,7 @@ import Header from "../components/Header";
 import Hero from "../components/Hero";
 import Sobre from "../components/Sobre";
 import Solucoes from "../components/Solucoes";
+import Planos from "../components/Planos";
 import Contato from "../components/Contato";
 import Footer from "../components/Footer";
 
@@ -12,6 +13,7 @@ export default function Home() {
       <Hero />
       <Sobre />
       <Solucoes />
+      <Planos />
       <Contato />
       <Footer />
     </div>

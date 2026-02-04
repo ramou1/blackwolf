@@ -1,6 +1,6 @@
 export default function Contato() {
   return (
-    <section id="contato" className="py-20 bg-[#0F0F0F]">
+    <section id="contato" className="py-20 bg-[#0F0F0F] scroll-mt-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl font-sans font-bold mb-4">
