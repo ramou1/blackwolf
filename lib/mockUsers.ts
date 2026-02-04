@@ -52,7 +52,7 @@ export interface RegisterData {
 }
 
 export function registerUser(data: RegisterData): { success: boolean; error?: string } {
-  const { email, password, name, role = "user" } = data;
+  const { email, password, name, role = "user", telefone, pais, documento, tipoUsuario, plano } = data;
   const all = [...MOCK_USERS, ...registeredUsers];
   if (all.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
     return { success: false, error: "Este e-mail já está em uso." };
@@ -63,7 +63,11 @@ export function registerUser(data: RegisterData): { success: boolean; error?: st
     password,
     name,
     role,
-    ...data,
+    telefone,
+    pais,
+    documento,
+    tipoUsuario,
+    plano,
   };
   registeredUsers.push(newUser as User);
   return { success: true };
