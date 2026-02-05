@@ -55,7 +55,7 @@ export function registerUser(data: RegisterData): { success: boolean; error?: st
   const { email, password, name, role = "user", telefone, pais, documento, tipoUsuario, plano } = data;
   const all = [...MOCK_USERS, ...registeredUsers];
   if (all.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
-    return { success: false, error: "Este e-mail já está em uso." };
+    return { success: false, error: "EMAIL_IN_USE" };
   }
   const newUser: User & Partial<RegisterData> = {
     id: `user-${Date.now()}`,

@@ -1,27 +1,32 @@
+"use client";
+
 import { Check, Rocket, Briefcase, TrendingUp, Globe } from "lucide-react";
+import { useTranslations } from "@/context/LanguageContext";
 
 export default function Solucoes() {
+  const tr = useTranslations();
+
+  const targetItems = [
+    { title: tr.solucoes.startup, description: tr.solucoes.startupDesc, icon: Rocket },
+    { title: tr.solucoes.investidores, description: tr.solucoes.investidoresDesc, icon: Briefcase },
+    { title: tr.solucoes.empresas, description: tr.solucoes.empresasDesc, icon: TrendingUp },
+    { title: tr.solucoes.projetos, description: tr.solucoes.projetosDesc, icon: Globe },
+  ];
+
   return (
     <section id="solucoes" className="py-20 bg-[#0F0F0F]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl font-sans font-bold mb-4">
-            O que <span className="text-[#1179a6]">oferecemos</span>
+            {tr.solucoes.title} <span className="text-[#1179a6]">{tr.solucoes.titleHighlight}</span>
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Soluções estratégicas para impulsionar seu negócio
+            {tr.solucoes.subtitle}
           </p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {[
-            "Gestão estratégica para ganho de capital",
-            "Captação de investidores",
-            "Intermediação com segurança jurídica",
-            "Projetos com alto potencial de retorno",
-            "Expansão internacional e tecnológica",
-            "Empresas e produtos prontos para escalar",
-          ].map((solucao, index) => (
+          {tr.solucoes.items.map((solucao, index) => (
             <div
               key={index}
               className="bg-[#2A2A2A] p-6 rounded-xl border border-gray-700/50 hover:border-gray-600 hover:bg-[#2F2F2F] transition-all group"
@@ -36,38 +41,17 @@ export default function Solucoes() {
           ))}
         </div>
 
-        {/* Para quem é */}
         <div className="mt-20 py-16 bg-[#1A1A1A] rounded-3xl px-6 sm:px-8 lg:px-12">
           <div className="text-center mb-12">
             <h2 className="text-4xl sm:text-5xl font-sans font-bold mb-4">
-              Para quem é a <span className="text-[#1179a6]">Blackwolf</span>
+              {tr.solucoes.paraQuemPrefix} <span className="text-[#1179a6]">Blackwolf</span>
+              {tr.solucoes.paraQuemSuffix}
             </h2>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                title: "Startups",
-                description: "Que querem escalar rápido",
-                icon: Rocket,
-              },
-              {
-                title: "Investidores",
-                description: "Buscando rentabilidade e inovação",
-                icon: Briefcase,
-              },
-              {
-                title: "Empresas em Expansão",
-                description: "Que precisam de parceiros",
-                icon: TrendingUp,
-              },
-              {
-                title: "Projetos Internacionais",
-                description: "Com interesse na América Latina",
-                icon: Globe,
-              },
-            ].map((item, index) => {
-              const IconComponent = item.icon;
+            {targetItems.map((item, index) => {
+              const IconComponent = item.icon as React.ComponentType<{ className?: string }>;
               return (
                 <div
                   key={index}

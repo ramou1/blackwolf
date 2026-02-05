@@ -4,6 +4,8 @@ import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useTranslations } from "@/context/LanguageContext";
+import PasswordInput from "./PasswordInput";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -12,6 +14,7 @@ interface LoginModalProps {
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const { login } = useAuth();
+  const tr = useTranslations();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,7 +26,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     if (success) {
       onClose();
     } else {
-      setError("E-mail ou senha incorretos. Tente novamente.");
+      setError(tr.login.erroCredenciais);
     }
   };
 
@@ -38,7 +41,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       />
       <div className="relative bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
         <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-[#2A2A2A]">
-          <h2 className="text-xl font-semibold text-white">Entrar</h2>
+          <h2 className="text-xl font-semibold text-white">{tr.login.title}</h2>
           <button
             onClick={onClose}
             className="p-2 text-gray-400 hover:text-white hover:bg-[#2A2A2A] rounded-lg transition-colors"
@@ -60,7 +63,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               htmlFor="login-email"
               className="block text-sm font-medium text-gray-300 mb-1"
             >
-              E-mail
+              {tr.login.email}
             </label>
             <input
               id="login-email"
@@ -79,11 +82,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
               htmlFor="login-password"
               className="block text-sm font-medium text-gray-300 mb-1"
             >
-              Senha
+              {tr.login.senha}
             </label>
-            <input
+            <PasswordInput
               id="login-password"
-              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -97,17 +99,17 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             type="submit"
             className="w-full py-3 bg-[#1179a6] hover:bg-[#1179a6]/90 text-white font-medium rounded-lg transition-colors"
           >
-            Entrar
+            {tr.login.botao}
           </button>
 
           <p className="text-center text-sm text-gray-400">
-            Não tem uma conta?{" "}
+            {tr.login.naoTemConta}{" "}
             <Link
               href="/cadastro"
               onClick={onClose}
               className="text-[#1179a6] hover:underline font-medium"
             >
-              Criar conta
+              {tr.login.criarConta}
             </Link>
           </p>
         </form>

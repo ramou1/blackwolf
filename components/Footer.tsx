@@ -1,6 +1,11 @@
+"use client";
+
 import Image from "next/image";
+import { useTranslations } from "@/context/LanguageContext";
 
 export default function Footer() {
+  const tr = useTranslations();
+
   return (
     <footer className="bg-[#0F0F0F] py-12 border-t border-gray-800">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,7 +22,7 @@ export default function Footer() {
             </div>
           </div>
           <div className="text-gray-400 text-sm">
-            © {new Date().getFullYear()} Blackwolf. Todos os direitos reservados.
+            © {new Date().getFullYear()} Blackwolf. {tr.footer.rights}
           </div>
         </div>
       </div>

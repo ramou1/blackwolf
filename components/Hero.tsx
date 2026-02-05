@@ -2,27 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
+import { useTranslations } from "@/context/LanguageContext";
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const tr = useTranslations();
 
-  const slides = [
-    {
-      title: "Negócios, Inovação, Confiança",
-      subtitle: "Conectando projetos inovadores a investidores estratégicos",
-      description: "Impulsionando crescimento, rentabilidade e expansão global",
-    },
-    {
-      title: "Expansão Global",
-      subtitle: "Atuamos no mundo inteiro",
-      description: "Pensamos grande e conectamos oportunidades internacionais",
-    },
-    {
-      title: "Alto Potencial de Retorno",
-      subtitle: "Projetos com impacto real",
-      description: "Foco em rentabilidade e crescimento sustentável",
-    },
-  ];
+  const slides = tr.hero.slides;
 
   useEffect(() => {
     const timer = setInterval(() => {

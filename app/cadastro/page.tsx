@@ -12,12 +12,15 @@ import {
   PLANOS_NEGOCIO,
   PLANOS_PATROCINADOR,
 } from "@/lib/constants";
+import PasswordInput from "@/components/PasswordInput";
+import { useTranslations } from "@/context/LanguageContext";
 
 const inputClass =
   "w-full px-4 py-2.5 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#1179a6] focus:border-transparent";
 
 export default function CadastroPage() {
   const router = useRouter();
+  const tr = useTranslations();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -38,22 +41,22 @@ export default function CadastroPage() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("As senhas não coincidem.");
+      setError(tr.cadastro.erroSenhasDiferentes);
       return;
     }
 
     if (password.length < 6) {
-      setError("A senha deve ter pelo menos 6 caracteres.");
+      setError(tr.cadastro.erroSenhaCurta);
       return;
     }
 
     if (!tipoUsuario) {
-      setError("Selecione o tipo de usuário.");
+      setError(tr.cadastro.erroTipoUsuario);
       return;
     }
 
     if (!plano) {
-      setError("Selecione um plano.");
+      setError(tr.cadastro.erroPlano);
       return;
     }
 
@@ -72,7 +75,11 @@ export default function CadastroPage() {
       setSuccess(true);
       setTimeout(() => router.push("/"), 2000);
     } else {
-      setError(result.error || "Erro ao criar conta.");
+      setError(
+        result.error === "EMAIL_IN_USE"
+          ? tr.cadastro.erroEmailEmUso
+          : result.error || tr.cadastro.erroGenerico
+      );
     }
   };
 
@@ -96,10 +103,10 @@ export default function CadastroPage() {
             </svg>
           </div>
           <h1 className="text-2xl font-semibold text-white mb-2">
-            Conta criada com sucesso!
+            {tr.cadastro.sucesso}
           </h1>
           <p className="text-gray-400 mb-4">
-            Redirecionando para a página inicial... Você já pode fazer login.
+            {tr.cadastro.redirecionando}
           </p>
         </div>
       </div>
@@ -115,7 +122,7 @@ export default function CadastroPage() {
             className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Voltar
+            {tr.cadastro.voltar}
           </Link>
         </div>
       </header>
@@ -133,10 +140,10 @@ export default function CadastroPage() {
           </div>
 
           <h1 className="text-2xl font-semibold text-white text-center mb-2">
-            Criar conta
+            {tr.cadastro.titulo}
           </h1>
           <p className="text-gray-400 text-center mb-8">
-            Preencha os dados para se cadastrar
+            {tr.cadastro.subtitulo}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -151,7 +158,7 @@ export default function CadastroPage() {
                 htmlFor="cadastro-name"
                 className="block text-sm font-medium text-gray-300 mb-1"
               >
-                Nome completo
+                {tr.cadastro.nome}
               </label>
               <input
                 id="cadastro-name"
@@ -170,7 +177,7 @@ export default function CadastroPage() {
                 htmlFor="cadastro-email"
                 className="block text-sm font-medium text-gray-300 mb-1"
               >
-                E-mail
+                {tr.cadastro.email}
               </label>
               <input
                 id="cadastro-email"
@@ -189,7 +196,7 @@ export default function CadastroPage() {
                 htmlFor="cadastro-telefone"
                 className="block text-sm font-medium text-gray-300 mb-1"
               >
-                Telefone
+                {tr.cadastro.telefone}
               </label>
               <input
                 id="cadastro-telefone"
@@ -207,7 +214,7 @@ export default function CadastroPage() {
                 htmlFor="cadastro-pais"
                 className="block text-sm font-medium text-gray-300 mb-1"
               >
-                País de origem
+                {tr.cadastro.pais}
               </label>
               <select
                 id="cadastro-pais"
@@ -216,7 +223,7 @@ export default function CadastroPage() {
                 className={inputClass}
                 required
               >
-                <option value="">Selecione o país</option>
+                <option value="">{tr.cadastro.paisPlaceholder}</option>
                 {PAISES.map((p) => (
                   <option key={p} value={p}>
                     {p}
@@ -230,7 +237,7 @@ export default function CadastroPage() {
                 htmlFor="cadastro-documento"
                 className="block text-sm font-medium text-gray-300 mb-1"
               >
-                CPF / CNPJ / ID / Passaporte
+                {tr.cadastro.documento}
               </label>
               <input
                 id="cadastro-documento"
@@ -238,14 +245,14 @@ export default function CadastroPage() {
                 value={documento}
                 onChange={(e) => setDocumento(e.target.value)}
                 className={inputClass}
-                placeholder="Número do documento"
+                placeholder={tr.cadastro.documentoPlaceholder}
                 required
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Tipo de usuário
+                {tr.cadastro.tipoUsuario}
               </label>
               <div className="space-y-2">
                 {TIPOS_USUARIO.map((tipo) => (
@@ -264,7 +271,7 @@ export default function CadastroPage() {
                       }}
                       className="text-[#1179a6] focus:ring-[#1179a6]"
                     />
-                    <span className="text-gray-300">{tipo.label}</span>
+                    <span className="text-gray-300">{tr.cadastroTipos[tipo.value]}</span>
                   </label>
                 ))}
               </div>
@@ -273,7 +280,7 @@ export default function CadastroPage() {
             {tipoUsuario && (
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Plano
+                  {tr.cadastro.plano}
                 </label>
                 <div className="space-y-2">
                   {planosDisponiveis.map((p) => (
@@ -306,17 +313,16 @@ export default function CadastroPage() {
                 htmlFor="cadastro-password"
                 className="block text-sm font-medium text-gray-300 mb-1"
               >
-                Senha
+                {tr.cadastro.senha}
               </label>
-              <input
+              <PasswordInput
                 id="cadastro-password"
-                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
                 className={inputClass}
-                placeholder="Mínimo 6 caracteres"
+                placeholder={tr.cadastro.senhaPlaceholder}
                 autoComplete="new-password"
               />
             </div>
@@ -326,16 +332,15 @@ export default function CadastroPage() {
                 htmlFor="cadastro-confirm"
                 className="block text-sm font-medium text-gray-300 mb-1"
               >
-                Confirmar senha
+                {tr.cadastro.confirmarSenha}
               </label>
-              <input
+              <PasswordInput
                 id="cadastro-confirm"
-                type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 className={inputClass}
-                placeholder="Repita a senha"
+                placeholder={tr.cadastro.confirmarSenhaPlaceholder}
                 autoComplete="new-password"
               />
             </div>
@@ -344,13 +349,13 @@ export default function CadastroPage() {
               type="submit"
               className="w-full py-3 bg-[#1179a6] hover:bg-[#1179a6]/90 text-white font-medium rounded-lg transition-colors"
             >
-              Criar conta
+              {tr.cadastro.botao}
             </button>
 
             <p className="text-center text-sm text-gray-400">
-              Já tem uma conta?{" "}
+              {tr.cadastro.jaTemConta}{" "}
               <Link href="/" className="text-[#1179a6] hover:underline font-medium">
-                Entrar
+                {tr.cadastro.entrar}
               </Link>
             </p>
           </form>

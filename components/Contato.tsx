@@ -1,13 +1,19 @@
+"use client";
+
+import { useTranslations } from "@/context/LanguageContext";
+
 export default function Contato() {
+  const tr = useTranslations();
+
   return (
     <section id="contato" className="py-20 bg-[#0F0F0F] scroll-mt-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl font-sans font-bold mb-4">
-            Entre em <span className="text-[#1179a6]">contato</span>
+            {tr.contato.title} <span className="text-[#1179a6]">{tr.contato.titleHighlight}</span>
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Vamos conversar sobre como podemos impulsionar seu negócio
+            {tr.contato.subtitle}
           </p>
         </div>
 
@@ -16,7 +22,7 @@ export default function Contato() {
             <div className="grid sm:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="nome" className="block text-sm font-medium text-gray-300 mb-2">
-                  Nome
+                  {tr.contato.nome}
                 </label>
                 <input
                   type="text"
@@ -24,12 +30,12 @@ export default function Contato() {
                   name="nome"
                   required
                   className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500"
-                  placeholder="Seu nome"
+                  placeholder={tr.contato.nomePlaceholder}
                 />
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                  E-mail
+                  {tr.contato.email}
                 </label>
                 <input
                   type="email"
@@ -43,7 +49,7 @@ export default function Contato() {
             </div>
             <div>
               <label htmlFor="assunto" className="block text-sm font-medium text-gray-300 mb-2">
-                Assunto
+                {tr.contato.assunto}
               </label>
               <input
                 type="text"
@@ -51,12 +57,12 @@ export default function Contato() {
                 name="assunto"
                 required
                 className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500"
-                placeholder="Assunto da mensagem"
+                placeholder={tr.contato.assuntoPlaceholder}
               />
             </div>
             <div>
               <label htmlFor="mensagem" className="block text-sm font-medium text-gray-300 mb-2">
-                Mensagem
+                {tr.contato.mensagem}
               </label>
               <textarea
                 id="mensagem"
@@ -64,14 +70,14 @@ export default function Contato() {
                 rows={6}
                 required
                 className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500 resize-none"
-                placeholder="Sua mensagem..."
+                placeholder={tr.contato.mensagemPlaceholder}
               />
             </div>
             <button
               type="submit"
               className="w-full bg-[#1179a6] hover:bg-[#1179a6]/90 text-white font-sans font-semibold py-4 px-8 rounded-lg transition-colors text-lg"
             >
-              Enviar Mensagem
+              {tr.contato.enviar}
             </button>
           </form>
         </div>
