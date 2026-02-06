@@ -11,9 +11,14 @@ export const PAISES = [
 export type Pais = (typeof PAISES)[number];
 
 export const TIPOS_USUARIO = [
-  { value: "negocio_startup", label: "Pessoa de negócio ou Startup" },
-  { value: "patrocinador_investidor", label: "Patrocinador ou Investidor" },
+  { value: "dono_negocio" },
+  { value: "loja_startup" },
+  { value: "patrocinador" },
+  { value: "investidor" },
+  { value: "socio" },
 ] as const;
+
+export const TIPOS_COM_PLANOS_NEGOCIO = ["dono_negocio", "loja_startup"];
 
 export const PLANOS_NEGOCIO = [
   { id: "basic", nome: "Basic", valor: 999 },

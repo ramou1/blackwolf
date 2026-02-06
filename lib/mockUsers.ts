@@ -45,14 +45,40 @@ export interface RegisterData {
   name: string;
   telefone?: string;
   pais?: string;
+  cidade?: string;
   documento?: string;
   tipoUsuario?: string;
   plano?: string;
+  formaPagamento?: "boleto" | "transferencia";
+  documentoBoleto?: string;
+  banco?: string;
+  agencia?: string;
+  conta?: string;
+  swift?: string;
+  iban?: string;
   role?: UserRole;
 }
 
 export function registerUser(data: RegisterData): { success: boolean; error?: string } {
-  const { email, password, name, role = "user", telefone, pais, documento, tipoUsuario, plano } = data;
+  const {
+    email,
+    password,
+    name,
+    role = "user",
+    telefone,
+    pais,
+    cidade,
+    documento,
+    tipoUsuario,
+    plano,
+    formaPagamento,
+    documentoBoleto,
+    banco,
+    agencia,
+    conta,
+    swift,
+    iban,
+  } = data;
   const all = [...MOCK_USERS, ...registeredUsers];
   if (all.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
     return { success: false, error: "EMAIL_IN_USE" };
@@ -65,9 +91,17 @@ export function registerUser(data: RegisterData): { success: boolean; error?: st
     role,
     telefone,
     pais,
+    cidade,
     documento,
     tipoUsuario,
     plano,
+    formaPagamento,
+    documentoBoleto,
+    banco,
+    agencia,
+    conta,
+    swift,
+    iban,
   };
   registeredUsers.push(newUser as User);
   return { success: true };

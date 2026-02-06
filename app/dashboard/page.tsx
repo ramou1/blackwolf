@@ -29,7 +29,7 @@ export default function DashboardPage() {
         <div className="rounded-lg border border-[#2A2A2A] bg-[#1A1A1A] p-6">
           <h2 className="text-lg font-medium text-white mb-2">Área do usuário</h2>
           <p className="text-gray-400 text-sm">
-            Em breve teremos novidades para você aqui.
+            Logo entraremos em contato para sua jornada de evolução.
           </p>
         </div>
       )}
