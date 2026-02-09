@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       return true;
     }
-    setAuthError(result.error ?? null);
+    setAuthError(result.success === false ? result.error : null);
     return false;
   }, []);
 
