@@ -62,7 +62,37 @@ service cloud.firestore {
 }
 ```
 
-## 7. Criar usuário Admin (opcional)
+## 7. Estrutura do documento do usuário (Firestore)
+
+Cada documento na coleção `users` segue esta estrutura (em inglês):
+
+```json
+{
+  "email": "string",
+  "name": "string",
+  "role": "user | admin",
+  "document": "string | null",
+  "city": "string | null",
+  "country": "string | null",
+  "phone": "string | null",
+  "userType": "string | null",
+  "plan": "string | null",
+  "createdAt": "ISO string",
+  "payment": {
+    "method": "boleto | transferencia | null",
+    "boletoDocument": "string | null",
+    "bank": "string | null",
+    "agency": "string | null",
+    "account": "string | null",
+    "swift": "string | null",
+    "iban": "string | null"
+  }
+}
+```
+
+Os dados de pagamento ficam aninhados em `payment` para manter a organização e o BD em inglês (projeto internacional).
+
+## 8. Criar usuário Admin (opcional)
 
 Para ter um admin no sistema:
 
@@ -70,7 +100,7 @@ Para ter um admin no sistema:
 2. No Firestore, vá em **users** > documento do usuário (UID)
 3. Edite o campo `role` de `"user"` para `"admin"`
 
-## 8. Reiniciar o servidor
+## 9. Reiniciar o servidor
 
 Reinicie o servidor de desenvolvimento:
 
