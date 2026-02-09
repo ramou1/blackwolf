@@ -156,14 +156,17 @@ export function onAuthChange(callback: (user: LoggedInUser | null) => void): (()
     return () => {};
   }
 
-  return onAuthStateChanged(auth, async (firebaseUser) => {
+  const firestore = db;
+  const authInstance = auth;
+
+  return onAuthStateChanged(authInstance, async (firebaseUser) => {
     if (!firebaseUser) {
       callback(null);
       return;
     }
 
     try {
-      const userDocRef = doc(db, USERS_COLLECTION, firebaseUser.uid);
+      const userDocRef = doc(firestore, USERS_COLLECTION, firebaseUser.uid);
       const userDocSnap = await getDoc(userDocRef);
       const userData = userDocSnap.exists() ? userDocSnap.data() : {};
 
