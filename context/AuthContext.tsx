@@ -7,15 +7,13 @@ import {
   useCallback,
   useEffect,
 } from "react";
-import type { LoggedInUser } from "@/lib/mockUsers";
+import type { LoggedInUser } from "@/lib/types";
 import {
   loginWithFirebase,
   logoutFirebase,
   onAuthChange,
 } from "@/lib/firebaseAuth";
 import { isFirebaseReady } from "@/lib/firebase";
-
-const STORAGE_KEY = "blackwolf-user";
 
 interface AuthContextType {
   user: LoggedInUser | null;
@@ -41,18 +39,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       return () => unsubscribe();
     }
-    // Mock: carrega usuário do localStorage
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as LoggedInUser;
-        if (parsed.id && parsed.email && parsed.name && parsed.role) {
-          setUser(parsed);
-        }
-      }
-    } catch {
-      // ignore
-    }
     setLoaded(true);
   }, []);
 
@@ -61,9 +47,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const result = await loginWithFirebase(email, password);
     if (result.success && result.user) {
       setUser(result.user);
-      if (!isFirebaseReady) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(result.user));
-      }
       return true;
     }
     setAuthError(result.success === false ? result.error : null);
@@ -73,9 +56,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     await logoutFirebase();
     setUser(null);
-    if (!isFirebaseReady) {
-      localStorage.removeItem(STORAGE_KEY);
-    }
   }, []);
 
   const clearAuthError = useCallback(() => setAuthError(null), []);

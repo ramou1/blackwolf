@@ -163,6 +163,14 @@ export default function Header() {
                   {isUserMenuOpen && (
                     <div className="absolute right-0 top-full mt-2 py-2 w-48 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg shadow-xl">
                       <Link
+                        href="/dashboard/profile"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#2A2A2A] hover:text-white transition-colors"
+                      >
+                        <User className="w-4 h-4" />
+                        Perfil
+                      </Link>
+                      <Link
                         href="/dashboard"
                         onClick={() => setIsUserMenuOpen(false)}
                         className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#2A2A2A] hover:text-white transition-colors"

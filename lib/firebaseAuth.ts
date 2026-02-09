@@ -9,8 +9,7 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db, isFirebaseReady } from "./firebase";
-import { validateLogin, registerUser } from "./mockUsers";
-import type { LoggedInUser } from "./mockUsers";
+import type { LoggedInUser, FirestoreUserDoc } from "./types";
 
 export interface RegisterData {
   email: string;
@@ -46,17 +45,8 @@ function firebaseUserToLoggedIn(firebaseUser: FirebaseUser, userData: Record<str
 export async function registerWithFirebase(
   data: RegisterData
 ): Promise<{ success: true; user: LoggedInUser } | { success: false; error: string }> {
-  // Fallback para mock quando Firebase não está configurado
   if (!isFirebaseReady || !auth || !db) {
-    const result = registerUser(data);
-    if (result.success) {
-      const mockUser = validateLogin(data.email, data.password);
-      if (mockUser) {
-        const { password: _, ...safeUser } = mockUser;
-        return { success: true, user: safeUser as LoggedInUser };
-      }
-    }
-    return { success: false, error: result.error || "Erro ao criar conta." };
+    return { success: false, error: "Firebase não está configurado. Configure as credenciais em lib/firebase/config.ts" };
   }
 
   try {
@@ -113,14 +103,8 @@ export async function loginWithFirebase(
   email: string,
   password: string
 ): Promise<{ success: true; user: LoggedInUser } | { success: false; error: string }> {
-  // Fallback para mock quando Firebase não está configurado
   if (!isFirebaseReady || !auth || !db) {
-    const found = validateLogin(email, password);
-    if (found) {
-      const { password: _, ...safeUser } = found;
-      return { success: true, user: safeUser as LoggedInUser };
-    }
-    return { success: false, error: "Credenciais inválidas." };
+    return { success: false, error: "Firebase não está configurado. Configure as credenciais em lib/firebase/config.ts" };
   }
 
   try {
@@ -182,4 +166,10 @@ export function onAuthChange(callback: (user: LoggedInUser | null) => void): (()
       });
     }
   });
+}
+
+export async function getUserProfile(userId: string): Promise<FirestoreUserDoc | null> {
+  if (!isFirebaseReady || !db) return null;
+  const snap = await getDoc(doc(db, USERS_COLLECTION, userId));
+  return snap.exists() ? (snap.data() as FirestoreUserDoc) : null;
 }

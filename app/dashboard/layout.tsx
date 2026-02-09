@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { LayoutDashboard, FileText, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, Users, User, LogOut } from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -53,14 +53,31 @@ export default function DashboardLayout({
           </Link>
 
           {isAdmin && (
-            <Link
-              href="/dashboard/boletos"
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-[#1A1A1A] hover:text-white transition-colors"
-            >
-              <FileText className="w-5 h-5" />
-              Boletos
-            </Link>
+            <>
+              <Link
+                href="/dashboard/boletos"
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-[#1A1A1A] hover:text-white transition-colors"
+              >
+                <FileText className="w-5 h-5" />
+                Boletos
+              </Link>
+              <Link
+                href="/dashboard/users"
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-[#1A1A1A] hover:text-white transition-colors"
+              >
+                <Users className="w-5 h-5" />
+                Usuários
+              </Link>
+            </>
           )}
+
+          <Link
+            href="/dashboard/profile"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-[#1A1A1A] hover:text-white transition-colors"
+          >
+            <User className="w-5 h-5" />
+            Perfil
+          </Link>
 
           <Link
             href="/"

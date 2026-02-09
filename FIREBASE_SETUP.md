@@ -47,15 +47,19 @@ Se preferir usar variáveis de ambiente, crie `.env.local` e altere `lib/firebas
 
 ### Regras de segurança (Firestore)
 
-Para desenvolvimento, você pode usar regras como:
+Para desenvolvimento, você pode usar regras como (admin pode ler todos os usuários):
 
 ```
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId} {
-      // Usuário só lê/escreve seus próprios dados
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // Usuário lê/escreve seus próprios dados; admin lê todos
+      allow read: if request.auth != null && (
+        request.auth.uid == userId ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+      allow write: if request.auth != null && request.auth.uid == userId;
       allow create: if request.auth != null;
     }
   }
