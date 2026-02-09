@@ -140,10 +140,10 @@ export default function Header() {
               </div>
               {navLinks}
               {user ? (
-                <div className="relative" ref={userMenuRef}>
-                  <button
-                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+                <div className="relative flex items-center gap-2" ref={userMenuRef}>
+                  <Link
+                    href="/dashboard"
+                    className="flex-shrink-0 text-gray-300 hover:text-white transition-colors"
                   >
                     <div className="w-9 h-9 rounded-full bg-[#1179a6] flex items-center justify-center overflow-hidden">
                       {user.avatarUrl ? (
@@ -158,18 +158,18 @@ export default function Header() {
                         <User className="w-4 h-4 text-white" />
                       )}
                     </div>
+                  </Link>
+                  <button
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className="flex items-center gap-0.5 text-gray-300 hover:text-white transition-colors"
+                  >
                     <span>{firstName}</span>
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`}
+                    />
                   </button>
                   {isUserMenuOpen && (
                     <div className="absolute right-0 top-full mt-2 py-2 w-48 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg shadow-xl">
-                      <Link
-                        href="/dashboard/profile"
-                        onClick={() => setIsUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#2A2A2A] hover:text-white transition-colors"
-                      >
-                        <User className="w-4 h-4" />
-                        Perfil
-                      </Link>
                       <Link
                         href="/dashboard"
                         onClick={() => setIsUserMenuOpen(false)}
@@ -177,6 +177,14 @@ export default function Header() {
                       >
                         <LayoutDashboard className="w-4 h-4" />
                         {tr.nav.areaInterna}
+                      </Link>
+                      <Link
+                        href="/dashboard/profile"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-[#2A2A2A] hover:text-white transition-colors"
+                      >
+                        <User className="w-4 h-4" />
+                        Perfil
                       </Link>
                       <button
                         onClick={() => {
