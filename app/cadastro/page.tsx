@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Store, Briefcase, UserPlus, TrendingUp, Users } from "lucide-react";
-import { registerUser } from "@/lib/mockUsers";
+import { registerWithFirebase } from "@/lib/firebaseAuth";
+import { useAuth } from "@/context/AuthContext";
 import {
   PAISES,
   TIPOS_USUARIO,
@@ -29,6 +30,7 @@ const TIPO_ICONS: Record<string, React.ComponentType<{ className?: string }>> = 
 
 export default function CadastroPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const tr = useTranslations();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [name, setName] = useState("");
@@ -91,7 +93,9 @@ export default function CadastroPage() {
     if (validateStep2()) setStep(3);
   };
 
-  const handleFinalSubmit = (e: FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleFinalSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -100,7 +104,8 @@ export default function CadastroPage() {
       return;
     }
 
-    const result = registerUser({
+    setSubmitting(true);
+    const result = await registerWithFirebase({
       email,
       password,
       name,
@@ -118,8 +123,10 @@ export default function CadastroPage() {
       swift: !isBrasil && swift ? swift : undefined,
       iban: !isBrasil && iban ? iban : undefined,
     });
+    setSubmitting(false);
 
     if (result.success) {
+      await login(email, password);
       setSuccess(true);
       setTimeout(() => router.push("/"), 2000);
     } else {
@@ -616,9 +623,10 @@ export default function CadastroPage() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-3 bg-[#1179a6] hover:bg-[#1179a6]/90 text-white font-medium rounded-lg transition-colors"
+                  disabled={submitting}
+                  className="flex-1 py-3 bg-[#1179a6] hover:bg-[#1179a6]/90 disabled:opacity-70 text-white font-medium rounded-lg transition-colors"
                 >
-                  {tr.cadastroPagamento.concluir}
+                  {submitting ? "..." : tr.cadastroPagamento.concluir}
                 </button>
               </div>
             </form>

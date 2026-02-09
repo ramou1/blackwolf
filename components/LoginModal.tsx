@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -13,22 +13,27 @@ interface LoginModalProps {
 }
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
-  const { login } = useAuth();
+  const { login, authError, clearAuthError } = useAuth();
   const tr = useTranslations();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError("");
-    const success = login(email, password);
+    setLoading(true);
+    const success = await login(email, password);
+    setLoading(false);
     if (success) {
       onClose();
-    } else {
-      setError(tr.login.erroCredenciais);
     }
   };
+
+  const error = authError ? (authError === "Credenciais inválidas." ? tr.login.erroCredenciais : authError) : null;
+
+  useEffect(() => {
+    if (isOpen) clearAuthError();
+  }, [isOpen, clearAuthError]);
 
   if (!isOpen) return null;
 
@@ -97,9 +102,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
           <button
             type="submit"
-            className="w-full py-3 bg-[#1179a6] hover:bg-[#1179a6]/90 text-white font-medium rounded-lg transition-colors"
+            disabled={loading}
+            className="w-full py-3 bg-[#1179a6] hover:bg-[#1179a6]/90 disabled:opacity-70 text-white font-medium rounded-lg transition-colors"
           >
-            {tr.login.botao}
+            {loading ? "..." : tr.login.botao}
           </button>
 
           <p className="text-center text-sm text-gray-400">
