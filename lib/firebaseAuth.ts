@@ -7,7 +7,7 @@ import {
   onAuthStateChanged,
   User as FirebaseUser,
 } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db, isFirebaseReady } from "./firebase";
 import type { LoggedInUser, FirestoreUserDoc } from "./types";
 
@@ -172,4 +172,53 @@ export async function getUserProfile(userId: string): Promise<FirestoreUserDoc |
   if (!isFirebaseReady || !db) return null;
   const snap = await getDoc(doc(db, USERS_COLLECTION, userId));
   return snap.exists() ? (snap.data() as FirestoreUserDoc) : null;
+}
+
+export interface ProfileUpdateData {
+  name?: string;
+  country?: string;
+  city?: string;
+  phone?: string;
+  document?: string;
+  bank?: string;
+  agency?: string;
+  account?: string;
+}
+
+export async function updateUserProfile(
+  userId: string,
+  data: ProfileUpdateData,
+  currentProfile: FirestoreUserDoc
+): Promise<{ success: true } | { success: false; error: string }> {
+  if (!isFirebaseReady || !db) {
+    return { success: false, error: "Firebase não está configurado." };
+  }
+
+  try {
+    const updates: Record<string, unknown> = {
+      name: data.name ?? currentProfile.name,
+      country: data.country ?? currentProfile.country ?? null,
+      city: data.city ?? currentProfile.city ?? null,
+      phone: data.phone ?? currentProfile.phone ?? null,
+      document: data.document ?? currentProfile.document ?? null,
+    };
+
+    if (currentProfile.payment?.method === "transferencia") {
+      updates["payment"] = {
+        ...currentProfile.payment,
+        bank: data.bank ?? currentProfile.payment?.bank ?? null,
+        agency: data.agency ?? currentProfile.payment?.agency ?? null,
+        account: data.account ?? currentProfile.payment?.account ?? null,
+      };
+    }
+
+    await updateDoc(doc(db, USERS_COLLECTION, userId), updates);
+    return { success: true };
+  } catch (err: unknown) {
+    const error = err as { message?: string };
+    return {
+      success: false,
+      error: error.message || "Erro ao atualizar perfil.",
+    };
+  }
 }
