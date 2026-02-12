@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { LayoutDashboard, FileText, Users, User, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, Users, User, MessageSquare, LogOut } from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -67,6 +67,13 @@ export default function DashboardLayout({
               >
                 <Users className="w-5 h-5" />
                 Usuários
+              </Link>
+              <Link
+                href="/dashboard/contacts"
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-[#1A1A1A] hover:text-white transition-colors"
+              >
+                <MessageSquare className="w-5 h-5" />
+                Contatos
               </Link>
             </>
           )}

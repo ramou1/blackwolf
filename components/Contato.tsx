@@ -8,7 +8,7 @@ export default function Contato() {
   const tr = useTranslations();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState("");
+  const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -20,14 +20,14 @@ export default function Contato() {
     setError(null);
     setSuccess(false);
 
-    const result = await saveContact({ name, email, subject, message });
+    const result = await saveContact({ name, email, phone, message });
 
     setLoading(false);
     if (result.success) {
       setSuccess(true);
       setName("");
       setEmail("");
-      setSubject("");
+      setPhone("");
       setMessage("");
     } else {
       setError(result.error);
@@ -58,22 +58,22 @@ export default function Contato() {
                 {error}
               </div>
             )}
+            <div>
+              <label htmlFor="nome" className="block text-sm font-medium text-gray-300 mb-2">
+                {tr.contato.nome}
+              </label>
+              <input
+                type="text"
+                id="nome"
+                name="nome"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500"
+                placeholder={tr.contato.nomePlaceholder}
+              />
+            </div>
             <div className="grid sm:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="nome" className="block text-sm font-medium text-gray-300 mb-2">
-                  {tr.contato.nome}
-                </label>
-                <input
-                  type="text"
-                  id="nome"
-                  name="nome"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500"
-                  placeholder={tr.contato.nomePlaceholder}
-                />
-              </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                   {tr.contato.email}
@@ -89,21 +89,20 @@ export default function Contato() {
                   placeholder="seu@email.com"
                 />
               </div>
-            </div>
-            <div>
-              <label htmlFor="assunto" className="block text-sm font-medium text-gray-300 mb-2">
-                {tr.contato.assunto}
-              </label>
-              <input
-                type="text"
-                id="assunto"
-                name="assunto"
-                required
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500"
-                placeholder={tr.contato.assuntoPlaceholder}
-              />
+              <div>
+                <label htmlFor="telefone" className="block text-sm font-medium text-gray-300 mb-2">
+                  {tr.contato.telefone}
+                </label>
+                <input
+                  type="tel"
+                  id="telefone"
+                  name="telefone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500"
+                  placeholder={tr.contato.telefonePlaceholder}
+                />
+              </div>
             </div>
             <div>
               <label htmlFor="mensagem" className="block text-sm font-medium text-gray-300 mb-2">
@@ -133,4 +132,3 @@ export default function Contato() {
     </section>
   );
 }
-

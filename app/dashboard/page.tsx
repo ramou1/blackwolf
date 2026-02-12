@@ -27,6 +27,7 @@ export default function DashboardPage() {
           <ul className="text-gray-400 text-sm list-disc list-inside space-y-1">
             <li><strong>Boletos</strong> – gerenciar boletos do sistema</li>
             <li><strong>Usuários</strong> – visualizar tabela com todos os usuários cadastrados</li>
+            <li><strong>Contatos</strong> – mensagens do formulário "Entre em contato"</li>
             <li><strong>Perfil</strong> – seus dados básicos</li>
           </ul>
         </div>

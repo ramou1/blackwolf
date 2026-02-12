@@ -63,11 +63,11 @@ service cloud.firestore {
       allow create: if request.auth != null;
     }
     match /contacts/{contactId} {
-      // Qualquer um pode criar (formulário público); só admin lê
+      // Qualquer um pode criar (formulário público); só admin lê e atualiza (marcar respondido)
       allow create: if true;
-      allow read: if request.auth != null &&
+      allow read, update: if request.auth != null &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-      allow update, delete: if false;
+      allow delete: if false;
     }
   }
 }
