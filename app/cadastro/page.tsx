@@ -17,6 +17,25 @@ import {
 import PasswordInput from "@/components/PasswordInput";
 import { useTranslations } from "@/context/LanguageContext";
 
+// Sanitiza para permitir apenas letras (incl. acentuadas), números e espaços
+function sanitizeName(value: string): string {
+  return value.replace(/[^\p{L}\p{N}\s]/gu, "").slice(0, 50);
+}
+
+// Sanitiza cidade: letras, números e espaços
+function sanitizeCity(value: string): string {
+  return value.replace(/[^\p{L}\p{N}\s]/gu, "").slice(0, 40);
+}
+
+// Sanitiza documento (CPF/CNPJ/ID/passaporte): letras, números e separadores comuns
+function sanitizeDocument(value: string): string {
+  return value.replace(/[^\p{L}\p{N}.\-\/]/gu, "").slice(0, 40);
+}
+
+const MAX_NOME = 50;
+const MAX_CIDADE = 40;
+const MAX_DOCUMENTO = 40;
+
 const inputClass =
   "w-full px-4 py-2.5 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#1179a6] focus:border-transparent";
 
@@ -237,8 +256,9 @@ export default function CadastroPage() {
                   id="cadastro-name"
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setName(sanitizeName(e.target.value))}
                   required
+                  maxLength={MAX_NOME}
                   className={inputClass}
                   placeholder="João Silva"
                   autoComplete="name"
@@ -279,7 +299,8 @@ export default function CadastroPage() {
                   id="cadastro-cidade"
                   type="text"
                   value={cidade}
-                  onChange={(e) => setCidade(e.target.value)}
+                  onChange={(e) => setCidade(sanitizeCity(e.target.value))}
+                  maxLength={MAX_CIDADE}
                   className={inputClass}
                   placeholder={tr.cadastroPagamento.cidadePlaceholder}
                 />
@@ -296,7 +317,8 @@ export default function CadastroPage() {
                   id="cadastro-documento"
                   type="text"
                   value={documento}
-                  onChange={(e) => setDocumento(e.target.value)}
+                  onChange={(e) => setDocumento(sanitizeDocument(e.target.value))}
+                  maxLength={MAX_DOCUMENTO}
                   className={inputClass}
                   placeholder={tr.cadastro.documentoPlaceholder}
                   required

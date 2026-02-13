@@ -4,6 +4,33 @@ import { useState, FormEvent } from "react";
 import { useTranslations } from "@/context/LanguageContext";
 import { saveContact } from "@/lib/firebaseContacts";
 
+// Sanitiza para permitir apenas letras (incl. acentuadas), números e espaços
+function sanitizeName(value: string): string {
+  return value.replace(/[^\p{L}\p{N}\s]/gu, "").slice(0, 40);
+}
+
+// Sanitiza para permitir apenas caracteres válidos de email
+function sanitizeEmail(value: string): string {
+  return value.replace(/[^\w@.\-+]/g, "").slice(0, 30);
+}
+
+// Sanitiza para permitir apenas números e símbolos de telefone
+function sanitizePhone(value: string): string {
+  return value.replace(/[^\d+\-()\s]/g, "").slice(0, 20);
+}
+
+// Sanitiza para permitir apenas texto, números e pontuação básica (sem emojis)
+function sanitizeMessage(value: string): string {
+  return value
+    .replace(/[^\p{L}\p{N}\s.,!?\-:;'"()\n\r]/gu, "")
+    .slice(0, 150);
+}
+
+const MAX_NAME = 40;
+const MAX_EMAIL = 30;
+const MAX_PHONE = 20;
+const MAX_MESSAGE = 150;
+
 export default function Contato() {
   const tr = useTranslations();
   const [name, setName] = useState("");
@@ -67,8 +94,9 @@ export default function Contato() {
                 id="nome"
                 name="nome"
                 required
+                maxLength={MAX_NAME}
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setName(sanitizeName(e.target.value))}
                 className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500"
                 placeholder={tr.contato.nomePlaceholder}
               />
@@ -83,8 +111,9 @@ export default function Contato() {
                   id="email"
                   name="email"
                   required
+                  maxLength={MAX_EMAIL}
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(sanitizeEmail(e.target.value))}
                   className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500"
                   placeholder="seu@email.com"
                 />
@@ -97,8 +126,9 @@ export default function Contato() {
                   type="tel"
                   id="telefone"
                   name="telefone"
+                  maxLength={MAX_PHONE}
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => setPhone(sanitizePhone(e.target.value))}
                   className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500"
                   placeholder={tr.contato.telefonePlaceholder}
                 />
@@ -113,8 +143,9 @@ export default function Contato() {
                 name="mensagem"
                 rows={6}
                 required
+                maxLength={MAX_MESSAGE}
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => setMessage(sanitizeMessage(e.target.value))}
                 className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500 resize-none"
                 placeholder={tr.contato.mensagemPlaceholder}
               />
