@@ -35,7 +35,8 @@ export default function Contato() {
   const tr = useTranslations();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phoneCountryCode, setPhoneCountryCode] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -47,6 +48,7 @@ export default function Contato() {
     setError(null);
     setSuccess(false);
 
+    const phone = [phoneCountryCode.trim(), phoneNumber.trim()].filter(Boolean).join(" ") || "";
     const result = await saveContact({ name, email, phone, message });
 
     setLoading(false);
@@ -54,7 +56,8 @@ export default function Contato() {
       setSuccess(true);
       setName("");
       setEmail("");
-      setPhone("");
+      setPhoneCountryCode("");
+      setPhoneNumber("");
       setMessage("");
     } else {
       setError(result.error);
@@ -119,19 +122,47 @@ export default function Contato() {
                 />
               </div>
               <div>
-                <label htmlFor="telefone" className="block text-sm font-medium text-gray-300 mb-2">
+                <span className="block text-sm font-medium text-gray-300 mb-2">
                   {tr.contato.telefone}
-                </label>
-                <input
-                  type="tel"
-                  id="telefone"
-                  name="telefone"
-                  maxLength={MAX_PHONE}
-                  value={phone}
-                  onChange={(e) => setPhone(sanitizePhone(e.target.value))}
-                  className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500"
-                  placeholder={tr.contato.telefonePlaceholder}
-                />
+                </span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="telefone-codigo" className="sr-only">
+                      {tr.contato.codigoPais}
+                    </label>
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      id="telefone-codigo"
+                      name="telefone-codigo"
+                      maxLength={3}
+                      value={phoneCountryCode}
+                      onChange={(e) =>
+                        setPhoneCountryCode(e.target.value.replace(/\D/g, "").slice(0, 3))
+                      }
+                      className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500"
+                      placeholder={tr.contato.codigoPaisPlaceholder}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="telefone" className="sr-only">
+                      {tr.contato.areaNumero}
+                    </label>
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      id="telefone"
+                      name="telefone"
+                      maxLength={20}
+                      value={phoneNumber}
+                      onChange={(e) =>
+                        setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 20))
+                      }
+                      className="w-full px-4 py-3 bg-[#1A1A1A]/50 border border-gray-800 rounded-lg focus:outline-none focus:border-gray-600 text-white placeholder-gray-500"
+                      placeholder={tr.contato.areaNumeroPlaceholder}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <div>

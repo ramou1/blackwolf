@@ -27,10 +27,41 @@ function sanitizeCity(value: string): string {
   return value.replace(/[^\p{L}\p{N}\s]/gu, "").slice(0, 40);
 }
 
-// Sanitiza documento (CPF/CNPJ/ID/passaporte): letras, números e separadores comuns
+// Sanitiza documento (ID/Passaporte): letras, números e separadores comuns
 function sanitizeDocument(value: string): string {
   return value.replace(/[^\p{L}\p{N}.\-\/]/gu, "").slice(0, 40);
 }
+
+// Apenas dígitos
+function onlyDigits(value: string): string {
+  return value.replace(/\D/g, "");
+}
+
+// Máscara CPF: 000.000.000-00
+function maskCPF(value: string): string {
+  const d = onlyDigits(value).slice(0, 11);
+  if (d.length <= 3) return d;
+  if (d.length <= 6) return `${d.slice(0, 3)}.${d.slice(3)}`;
+  if (d.length <= 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
+  return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
+}
+
+// Máscara CNPJ: 00.000.000/0000-00
+function maskCNPJ(value: string): string {
+  const d = onlyDigits(value).slice(0, 14);
+  if (d.length <= 2) return d;
+  if (d.length <= 5) return `${d.slice(0, 2)}.${d.slice(2)}`;
+  if (d.length <= 8) return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5)}`;
+  if (d.length <= 12) return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8)}`;
+  return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8, 12)}-${d.slice(12)}`;
+}
+
+const TIPOS_DOCUMENTO = [
+  { value: "cpf", labelKey: "documentoTipoCpf" as const },
+  { value: "cnpj", labelKey: "documentoTipoCnpj" as const },
+  { value: "id", labelKey: "documentoTipoId" as const },
+  { value: "passaporte", labelKey: "documentoTipoPassaporte" as const },
+] as const;
 
 const MAX_NOME = 50;
 const MAX_CIDADE = 40;
@@ -51,33 +82,44 @@ export default function CadastroPage() {
   const router = useRouter();
   const { login } = useAuth();
   const tr = useTranslations();
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2>(1);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [telefone, setTelefone] = useState("");
+  const [phoneCountryCode, setPhoneCountryCode] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [pais, setPais] = useState("");
   const [cidade, setCidade] = useState("");
+  const [tipoDocumento, setTipoDocumento] = useState<"cpf" | "cnpj" | "id" | "passaporte" | "">("");
   const [documento, setDocumento] = useState("");
   const [tipoUsuario, setTipoUsuario] = useState("");
   const [plano, setPlano] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [boletoConfirmado, setBoletoConfirmado] = useState(false);
-  const [banco, setBanco] = useState("");
-  const [agencia, setAgencia] = useState("");
-  const [conta, setConta] = useState("");
-  const [swift, setSwift] = useState("");
-  const [iban, setIban] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-
-  const isBrasil = pais === "Brasil";
   const planosDisponiveis = TIPOS_COM_PLANOS_NEGOCIO.includes(tipoUsuario)
     ? PLANOS_NEGOCIO
     : PLANOS_PATROCINADOR;
 
   const validateStep1 = () => {
     setError("");
+    if (!tipoDocumento) {
+      setError(tr.cadastro.erroTipoDocumento);
+      return false;
+    }
+    if (!documento.trim()) {
+      setError(tr.cadastro.erroDocumentoObrigatorio);
+      return false;
+    }
+    const digits = onlyDigits(documento);
+    if (tipoDocumento === "cpf" && digits.length !== 11) {
+      setError(tr.cadastro.erroCpfInvalido);
+      return false;
+    }
+    if (tipoDocumento === "cnpj" && digits.length !== 14) {
+      setError(tr.cadastro.erroCnpjInvalido);
+      return false;
+    }
     if (!tipoUsuario) {
       setError(tr.cadastro.erroTipoUsuario);
       return false;
@@ -107,40 +149,23 @@ export default function CadastroPage() {
     if (validateStep1()) setStep(2);
   };
 
-  const handleStep2Submit = (e: FormEvent) => {
-    e.preventDefault();
-    if (validateStep2()) setStep(3);
-  };
-
   const [submitting, setSubmitting] = useState(false);
 
-  const handleFinalSubmit = async (e: FormEvent) => {
+  const handleStep2Submit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!validateStep2()) return;
     setError("");
-
-    if (isBrasil && !boletoConfirmado) {
-      setError(tr.cadastroPagamento.erroBoletoConfirmar);
-      return;
-    }
-
     setSubmitting(true);
     const result = await registerWithFirebase({
       email,
       password,
       name,
-      telefone: telefone || undefined,
+      telefone: [phoneCountryCode.trim(), phoneNumber.trim()].filter(Boolean).join(" ") || undefined,
       pais: pais || undefined,
       cidade: cidade || undefined,
       documento: documento || undefined,
       tipoUsuario,
       plano,
-      formaPagamento: isBrasil ? "boleto" : "transferencia",
-      documentoBoleto: isBrasil ? documento : undefined,
-      banco: !isBrasil && banco ? banco : undefined,
-      agencia: !isBrasil && agencia ? agencia : undefined,
-      conta: !isBrasil && conta ? conta : undefined,
-      swift: !isBrasil && swift ? swift : undefined,
-      iban: !isBrasil && iban ? iban : undefined,
     });
     setSubmitting(false);
 
@@ -221,20 +246,15 @@ export default function CadastroPage() {
             <div
               className={`w-3 h-3 rounded-full ${step >= 2 ? "bg-[#1179a6]" : "bg-[#2A2A2A]"}`}
             />
-            <div
-              className={`w-3 h-3 rounded-full ${step >= 3 ? "bg-[#1179a6]" : "bg-[#2A2A2A]"}`}
-            />
           </div>
 
           <h1 className="text-2xl font-semibold text-white text-center mb-2">
             {step === 1 && tr.cadastroPagamento.dadosPessoaisTitulo}
             {step === 2 && tr.cadastroPagamento.cadastroTitulo}
-            {step === 3 && tr.cadastroPagamento.titulo}
           </h1>
           <p className="text-gray-400 text-center mb-8">
             {step === 1 && tr.cadastroPagamento.dadosPessoaisSubtitulo}
             {step === 2 && tr.cadastroPagamento.cadastroSubtitulo}
-            {step === 3 && tr.cadastroPagamento.subtitulo}
           </p>
 
           {step === 1 && (
@@ -307,22 +327,52 @@ export default function CadastroPage() {
               </div>
 
               <div>
-                <label
-                  htmlFor="cadastro-documento"
-                  className="block text-sm font-medium text-gray-300 mb-1"
-                >
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   {tr.cadastro.documento}
                 </label>
-                <input
-                  id="cadastro-documento"
-                  type="text"
-                  value={documento}
-                  onChange={(e) => setDocumento(sanitizeDocument(e.target.value))}
-                  maxLength={MAX_DOCUMENTO}
-                  className={inputClass}
-                  placeholder={tr.cadastro.documentoPlaceholder}
+                <select
+                  id="cadastro-tipo-documento"
+                  value={tipoDocumento}
+                  onChange={(e) => {
+                    const v = e.target.value as "" | "cpf" | "cnpj" | "id" | "passaporte";
+                    setTipoDocumento(v);
+                    setDocumento("");
+                  }}
                   required
-                />
+                  className={inputClass}
+                >
+                  <option value="">{tr.cadastro.documentoTipoPlaceholder}</option>
+                  {TIPOS_DOCUMENTO.map((t) => (
+                    <option key={t.value} value={t.value}>
+                      {tr.cadastro[t.labelKey]}
+                    </option>
+                  ))}
+                </select>
+                {tipoDocumento && (
+                  <input
+                    id="cadastro-documento"
+                    type="text"
+                    value={documento}
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      if (tipoDocumento === "cpf") setDocumento(maskCPF(raw));
+                      else if (tipoDocumento === "cnpj") setDocumento(maskCNPJ(raw));
+                      else setDocumento(sanitizeDocument(raw));
+                    }}
+                    maxLength={
+                      tipoDocumento === "cpf" ? 14 : tipoDocumento === "cnpj" ? 18 : MAX_DOCUMENTO
+                    }
+                    className={`${inputClass} mt-2`}
+                    placeholder={
+                      tipoDocumento === "cpf"
+                        ? tr.cadastro.documentoPlaceholderCpf
+                        : tipoDocumento === "cnpj"
+                          ? tr.cadastro.documentoPlaceholderCnpj
+                          : tr.cadastro.documentoPlaceholder
+                    }
+                    required
+                  />
+                )}
               </div>
 
               <div>
@@ -450,21 +500,47 @@ export default function CadastroPage() {
               </div>
 
               <div>
-                <label
-                  htmlFor="cadastro-telefone"
-                  className="block text-sm font-medium text-gray-300 mb-1"
-                >
+                <span className="block text-sm font-medium text-gray-300 mb-1">
                   {tr.cadastro.telefone}
-                </label>
-                <input
-                  id="cadastro-telefone"
-                  type="tel"
-                  value={telefone}
-                  onChange={(e) => setTelefone(e.target.value)}
-                  className={inputClass}
-                  placeholder="+55 11 99999-9999"
-                  autoComplete="tel"
-                />
+                </span>
+                <div className="grid grid-cols-[1fr_2fr] gap-3 mt-1">
+                  <div>
+                    <label htmlFor="cadastro-codigo-pais" className="sr-only">
+                      {tr.cadastro.codigoPais}
+                    </label>
+                    <input
+                      id="cadastro-codigo-pais"
+                      type="tel"
+                      inputMode="numeric"
+                      value={phoneCountryCode}
+                      onChange={(e) =>
+                        setPhoneCountryCode(e.target.value.replace(/\D/g, "").slice(0, 3))
+                      }
+                      maxLength={3}
+                      className={inputClass}
+                      placeholder={tr.cadastro.codigoPaisPlaceholder}
+                      autoComplete="tel-country-code"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="cadastro-telefone" className="sr-only">
+                      {tr.cadastro.areaNumero}
+                    </label>
+                    <input
+                      id="cadastro-telefone"
+                      type="tel"
+                      inputMode="numeric"
+                      value={phoneNumber}
+                      onChange={(e) =>
+                        setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 20))
+                      }
+                      maxLength={20}
+                      className={inputClass}
+                      placeholder={tr.cadastro.areaNumeroPlaceholder}
+                      autoComplete="tel-national"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -514,9 +590,10 @@ export default function CadastroPage() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-3 bg-[#1179a6] hover:bg-[#1179a6]/90 text-white font-medium rounded-lg transition-colors"
+                  disabled={submitting}
+                  className="flex-1 py-3 bg-[#1179a6] hover:bg-[#1179a6]/90 disabled:opacity-70 text-white font-medium rounded-lg transition-colors"
                 >
-                  {tr.cadastroPagamento.continuar}
+                  {submitting ? "..." : tr.cadastroPagamento.concluir}
                 </button>
               </div>
 
@@ -529,128 +606,6 @@ export default function CadastroPage() {
                   {tr.cadastro.entrar}
                 </Link>
               </p>
-            </form>
-          )}
-
-          {step === 3 && (
-            <form onSubmit={handleFinalSubmit} className="space-y-6">
-              {error && (
-                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
-                  {error}
-                </div>
-              )}
-
-              {isBrasil ? (
-                <div className="rounded-xl border border-[#2A2A2A] p-6 bg-[#1A1A1A]">
-                  <h3 className="font-semibold text-white mb-2">
-                    {tr.cadastroPagamento.boletoTitulo}
-                  </h3>
-                  <p className="text-gray-400 text-sm mb-4">
-                    {tr.cadastroPagamento.boletoDesc}
-                  </p>
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={boletoConfirmado}
-                      onChange={(e) => setBoletoConfirmado(e.target.checked)}
-                      className="mt-1 text-[#1179a6] rounded focus:ring-[#1179a6]"
-                    />
-                    <span className="text-gray-300 text-sm">
-                      {tr.cadastroPagamento.boletoConfirmar}
-                    </span>
-                  </label>
-                </div>
-              ) : (
-                <div className="rounded-xl border border-[#2A2A2A] p-6 bg-[#1A1A1A]">
-                  <h3 className="font-semibold text-white mb-2">
-                    {tr.cadastroPagamento.dadosBancariosTitulo}
-                  </h3>
-                  <p className="text-gray-400 text-sm mb-4">
-                    {tr.cadastroPagamento.dadosBancariosDesc}
-                  </p>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm text-gray-400 mb-1">
-                        {tr.cadastroPagamento.banco}
-                      </label>
-                      <input
-                        type="text"
-                        value={banco}
-                        onChange={(e) => setBanco(e.target.value)}
-                        className={inputClass}
-                        placeholder="Nome do banco"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm text-gray-400 mb-1">
-                          {tr.cadastroPagamento.agencia}
-                        </label>
-                        <input
-                          type="text"
-                          value={agencia}
-                          onChange={(e) => setAgencia(e.target.value)}
-                          className={inputClass}
-                          placeholder="0000"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm text-gray-400 mb-1">
-                          {tr.cadastroPagamento.conta}
-                        </label>
-                        <input
-                          type="text"
-                          value={conta}
-                          onChange={(e) => setConta(e.target.value)}
-                          className={inputClass}
-                          placeholder="00000-0"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm text-gray-400 mb-1">
-                        {tr.cadastroPagamento.swift}
-                      </label>
-                      <input
-                        type="text"
-                        value={swift}
-                        onChange={(e) => setSwift(e.target.value)}
-                        className={inputClass}
-                        placeholder="SWIFT/BIC"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm text-gray-400 mb-1">
-                        {tr.cadastroPagamento.iban}
-                      </label>
-                      <input
-                        type="text"
-                        value={iban}
-                        onChange={(e) => setIban(e.target.value)}
-                        className={inputClass}
-                        placeholder="IBAN"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="flex-1 py-3 border border-[#2A2A2A] text-gray-300 hover:bg-[#1A1A1A] rounded-lg transition-colors"
-                >
-                  {tr.cadastroPagamento.voltar}
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex-1 py-3 bg-[#1179a6] hover:bg-[#1179a6]/90 disabled:opacity-70 text-white font-medium rounded-lg transition-colors"
-                >
-                  {submitting ? "..." : tr.cadastroPagamento.concluir}
-                </button>
-              </div>
             </form>
           )}
         </div>

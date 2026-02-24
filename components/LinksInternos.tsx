@@ -5,7 +5,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useTranslations } from "@/context/LanguageContext";
 import {
   User,
-  FileText,
   Users,
   MessageSquare,
   ChevronRight,
@@ -25,11 +24,6 @@ export default function LinksInternos() {
   ];
 
   const adminCards = [
-    {
-      href: "/dashboard/boletos",
-      icon: FileText,
-      label: tr.linksInternos.boletos,
-    },
     {
       href: "/dashboard/users",
       icon: Users,

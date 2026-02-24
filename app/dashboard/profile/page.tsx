@@ -23,12 +23,21 @@ export default function ProfilePage() {
     name: "",
     country: "",
     city: "",
-    phone: "",
+    phoneCountryCode: "",
+    phoneNumber: "",
     document: "",
     bank: "",
     agency: "",
     account: "",
   });
+
+  const parsePhone = (phone: string | null | undefined) => {
+    if (!phone || !phone.trim()) return { code: "", number: "" };
+    const parts = phone.trim().split(/\s+/);
+    if (parts.length >= 2 && parts[0].length <= 3 && /^\d+$/.test(parts[0]))
+      return { code: parts[0], number: parts.slice(1).join(" ") };
+    return { code: "", number: phone.trim() };
+  };
 
   useEffect(() => {
     if (!isAuthenticated || !user) return;
@@ -36,11 +45,13 @@ export default function ProfilePage() {
       .then((p) => {
         setProfile(p);
         if (p) {
+          const { code, number } = parsePhone(p.phone);
           setFormData({
             name: p.name || "",
             country: p.country || "",
             city: p.city || "",
-            phone: p.phone || "",
+            phoneCountryCode: code,
+            phoneNumber: number,
             document: p.document || "",
             bank: p.payment?.bank || "",
             agency: p.payment?.agency || "",
@@ -55,7 +66,11 @@ export default function ProfilePage() {
     if (!user || !profile) return;
     setSaving(true);
     setError(null);
-    const result = await updateUserProfile(user.id, formData, profile);
+    const phone =
+      [formData.phoneCountryCode.trim(), formData.phoneNumber.trim()]
+        .filter(Boolean)
+        .join(" ") || undefined;
+    const result = await updateUserProfile(user.id, { ...formData, phone }, profile);
     setSaving(false);
     if (result.success) {
       setProfile({
@@ -63,7 +78,7 @@ export default function ProfilePage() {
         name: formData.name,
         country: formData.country || null,
         city: formData.city || null,
-        phone: formData.phone || null,
+        phone: phone ?? null,
         document: formData.document || null,
         payment: profile.payment?.method === "transferencia"
           ? {
@@ -82,11 +97,13 @@ export default function ProfilePage() {
 
   const handleCancel = () => {
     if (profile) {
+      const { code, number } = parsePhone(profile.phone);
       setFormData({
         name: profile.name || "",
         country: profile.country || "",
         city: profile.city || "",
-        phone: profile.phone || "",
+        phoneCountryCode: code,
+        phoneNumber: number,
         document: profile.document || "",
         bank: profile.payment?.bank || "",
         agency: profile.payment?.agency || "",
@@ -223,13 +240,36 @@ export default function ProfilePage() {
             <div>
               <span className="text-gray-500 text-sm block mb-1">Telefone</span>
               {editing ? (
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className={inputClass}
-                  placeholder="Seu telefone"
-                />
+                <div className="grid grid-cols-[1fr_2fr] gap-3">
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={formData.phoneCountryCode}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        phoneCountryCode: e.target.value.replace(/\D/g, "").slice(0, 3),
+                      })
+                    }
+                    maxLength={3}
+                    className={inputClass}
+                    placeholder="ex: 55"
+                  />
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={formData.phoneNumber}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        phoneNumber: e.target.value.replace(/\D/g, "").slice(0, 20),
+                      })
+                    }
+                    maxLength={20}
+                    className={inputClass}
+                    placeholder="ex: 11 99999-9999"
+                  />
+                </div>
               ) : (
                 <span className="text-white">{profile?.phone || "—"}</span>
               )}
