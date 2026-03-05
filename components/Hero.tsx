@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "@/context/LanguageContext";
 
@@ -40,6 +41,16 @@ export default function Hero() {
               <p className="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto">
                 {slide.description}
               </p>
+              <div className="flex justify-center mt-8">
+                <Image
+                  src="/images/icone-patas.png"
+                  alt=""
+                  width={80}
+                  height={80}
+                  className="object-contain opacity-90"
+                  unoptimized
+                />
+              </div>
             </div>
           </div>
         ))}

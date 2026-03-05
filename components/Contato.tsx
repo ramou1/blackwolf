@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import Image from "next/image";
 import { useTranslations } from "@/context/LanguageContext";
 import { saveContact } from "@/lib/firebaseContacts";
 
@@ -189,6 +190,16 @@ export default function Contato() {
               {loading ? "Enviando..." : tr.contato.enviar}
             </button>
           </form>
+        </div>
+        <div className="flex justify-center mt-12">
+          <Image
+            src="/images/icone-patas.png"
+            alt=""
+            width={72}
+            height={72}
+            className="object-contain opacity-90"
+            unoptimized
+          />
         </div>
       </div>
     </section>
